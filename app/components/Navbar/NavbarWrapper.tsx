@@ -15,10 +15,7 @@ export default function NavbarWrapper() {
 
   if (hideNavbar) {
     return null;
-  } else if (shownavad) {
-    return <NavbarAdmin />;
-
-  } else {
+  }  else {
     return <Navbar />;
   }
 

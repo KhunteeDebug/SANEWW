@@ -9,9 +9,9 @@ interface Incomedata {
 
 export default function HomeAdminPage() {
   const menuItems = [
-    { label: "CUSTOMERS", icon: "/person-HomeAdmin.png", route: "/admin/customers" },
+    { label: "CUSTOMERS", icon: "/person-HomeAdmin.png", route: "/admin/customer" },
     { label: "PC MONITORING", icon: "/computer.png", route: "/admin/pcmonitor" },
-    { label: "REPORTS", icon: "/person+info+filled.png", route: "/info" },
+    { label: "SELECT TIME", icon: "/computer.png", route: "/admin/select_time" },
   ];
 
   const [income, setIncome] = useState<Incomedata | null>(null);
@@ -25,7 +25,6 @@ export default function HomeAdminPage() {
         });
         const json = await res.json();
         if (res.ok) {
-          // json = { totalIncome: "1234.56" }
           setIncome(json);
         } else {
           console.warn("Not authenticated");

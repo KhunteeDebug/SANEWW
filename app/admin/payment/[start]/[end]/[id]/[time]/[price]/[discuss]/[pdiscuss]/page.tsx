@@ -12,12 +12,10 @@ export default function Payment({ params }: { params: Promise<{ id: string; star
             <div className="space-y-6 items-center justify-center">
                 <h1 className="text-white text-4xl font-bold text-center">SCAN TO PAY</h1>
                 <div className="flex justify-center rounded-md">
-                    <Image
-                        src="/PAYMENT.png"
-                        alt="QR Code"
-                        width={250}
-                        height={95}
-                        className="object-cover"
+                    <img
+                        src="https://promptpay.io/0842463694/100"
+                        alt="PromptPay QR"
+                        className="w-40 h-40"
                     />
                 </div>
 

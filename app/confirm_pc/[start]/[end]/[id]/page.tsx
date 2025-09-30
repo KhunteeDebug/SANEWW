@@ -28,7 +28,7 @@ export default function free({ params }: { params: Promise<{ id: string; start: 
           </Link>
 
           {/* Button */}
-          <Link href="/booking">
+          <Link href="/select_time">
             <div className="h-17 w-40 bg-white rounded-md flex items-center justify-center">
               <h1 className="text-xl font-bold text-center">ยกเลิกการจอง</h1>
             </div>

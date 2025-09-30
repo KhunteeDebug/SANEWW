@@ -7,6 +7,7 @@ import Link from "next/link";
 interface UserData {
   username: string;
   points: number;
+  role: string;
 }
 
 const Navbar = () => {
@@ -24,7 +25,7 @@ const Navbar = () => {
         if (res.ok) {
           const json = await res.json();
           if (json?.data || json?.message) {
-            setUser(json.data || json.message); // รองรับหลายรูปแบบ response
+            setUser(json.message); // รองรับหลายรูปแบบ response
           }
         } else {
           console.warn("Not authenticated");
@@ -33,7 +34,6 @@ const Navbar = () => {
         console.error("Failed to fetch user:", err);
       }
     };
-
     fetchUserData();
   }, []);
 
@@ -71,7 +71,6 @@ const Navbar = () => {
               <h1 className="ml-2 text-black font-bold text-lg">BOOKING</h1>
             </div>
           </Link>
-
           <Link href="/history">
             <div className="h-14 w-40 bg-white rounded-md flex items-center gap-2 hover:bg-gray-100 transition">
               <Image
@@ -84,6 +83,22 @@ const Navbar = () => {
               <h1 className="ml-2 text-black font-bold text-lg">HISTORY</h1>
             </div>
           </Link>
+
+          {user?.role == "Admin" && (
+            <Link href="/admin">
+              <div className="h-14 w-40 bg-white rounded-md flex items-center gap-2 hover:bg-gray-100 transition">
+                <Image
+                  src="/setting.png"
+                  alt="Admin"
+                  width={30}
+                  height={30}
+                  className="object-contain ml-3"
+                />
+                <h1 className="ml-2 text-black font-bold text-lg">Admin</h1>
+              </div>
+            </Link>
+          )}
+
         </div>
       </div>
 
