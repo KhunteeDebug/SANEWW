@@ -44,7 +44,7 @@ export default function LoginPage() {
 
         // redirect ไปหน้า dashboard
         setTimeout(() => {
-          router.push("/");
+          router.push("/admin");
         }, 1000);
       } else {
         toast.error((data.message || "Login failed"));

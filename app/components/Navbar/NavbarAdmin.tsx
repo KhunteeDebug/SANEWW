@@ -1,6 +1,10 @@
 import React from 'react'
 import Image from 'next/image'
 import Link from "next/link";
+const logout = async () => {
+  await fetch("/api/auth/logout", { method: "GET" });
+  window.location.href = "/login";
+};
 const Navbar = () => {
   return (
     <div className=" bg-[#802834] duration-200 h-[10vh] z-[100] fixed w-full flex items-center justify-between">
@@ -8,6 +12,18 @@ const Navbar = () => {
 
       {/* Button Profile */}
       <div className="relative flex items-center w-full mr-20 ">
+        <button
+          onClick={logout}
+          className="h-[50px] w-[50px] flex items-center justify-center rounded-md bg-white hover:bg-gray-200 transition ml-20"
+        >
+          <Image
+            src="/logout.png"
+            alt="Logout"
+            width={40}
+            height={40}
+            className="object-contain m-2"
+          />
+        </button>
         <div className="absolute right-70">
           <Link href="/">
             <div className="h-[50px] w-[50px] flex items-center justify-center rounded-md bg-white hover:bg-gray-200 transition">

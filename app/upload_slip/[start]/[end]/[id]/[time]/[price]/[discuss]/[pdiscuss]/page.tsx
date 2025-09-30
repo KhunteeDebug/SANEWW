@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from 'react-hot-toast';
 interface PaymentPageProps {
   params: {
     id: string;
@@ -60,23 +61,25 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
         method: "POST",
         body: form,
       });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Booking failed");
-      }
-
       const data = await res.json();
 
       const encoded = data.message;
+      if (res.ok) {
 
-      const link = `/randomID/${encodeURIComponent(data.end_time)}/${data.username}/${data.password}`;
 
-      // ส่งผู้ใช้ไปหน้าผลลัพธ์
-      router.push(link);
-    } catch (err: any) {
+        const link = `/randomID/${encodeURIComponent(data.end_time)}/${data.username}/${data.password}`;
+
+        // ส่งผู้ใช้ไปหน้าผลลัพธ์
+        toast.success(data.message);
+        setTimeout(() => {
+          router.push(link);
+        }, 1000);;
+      } else {
+        toast.error((data.message || "Login failed"));
+
+      }
+    } catch (err) {
       console.error(err);
-      alert("เกิดข้อผิดพลาด: " + err.message);
     }
   };
 
@@ -179,7 +182,7 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
 
       <div className="p-4 sm:p-6 h-[10vh] z-[100] fixed bottom-0 w-full flex items-center justify-between bg-transparent sm:bg-[#802834]">
         <Link
-          href={`/payment/${start}/${end}/${id}/${timepa}/${price}/${discuss}/${pdiscuss}`}
+          href={`/admin/payment/${start}/${end}/${id}/${timepa}/${price}/${discuss}/${pdiscuss}`}
         >
           <button className="bg-white text-black px-4 sm:px-6 py-2 rounded font-bold text-sm sm:text-base">
             ⬅ BACK
