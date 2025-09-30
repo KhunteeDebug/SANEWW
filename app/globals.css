@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@layer backgraund-image {
+    .bg-image {
+        background-image: url('/backgraund.jpg');
+        background-size: cover;
+        background-position: center;
+
+    }
+}
