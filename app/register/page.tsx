@@ -201,7 +201,7 @@ export default function RegisterPage() {
                                 <div className="text-center">
                                     <p className="text-white text-sm">
                                         หากมีบัญชีแล้ว?{' '}
-                                        <a href="/Login" className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors">
+                                        <a href="/login" className="text-yellow-400 hover:text-yellow-300 font-semibold transition-colors">
                                             เข้าสู่ระบบ
                                         </a>
                                     </p>
