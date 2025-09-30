@@ -95,6 +95,7 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
           onSubmit={onSubmit}
           className="space-y-6 bg-black/40 backdrop-blur-md rounded-2xl p-5 sm:p-8 border border-white/10"
         >
+          
           <div
             onDragEnter={(e) => {
               e.preventDefault();

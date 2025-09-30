@@ -11,7 +11,7 @@ export default function HomeAdminPage() {
   const menuItems = [
     { label: "CUSTOMERS", icon: "/person-HomeAdmin.png", route: "/admin/customer" },
     { label: "PC MONITORING", icon: "/computer.png", route: "/admin/pcmonitor" },
-    { label: "SELECT TIME", icon: "/computer.png", route: "/admin/select_time" },
+    { label: "MANAGE COMPUTER", icon: "/computer.png", route: "/admin/select_time" },
     { label: "EDIT PROMOTION", icon: "/edit-promotion.png", route: "/admin/uploadpromotion" },
   ];
 

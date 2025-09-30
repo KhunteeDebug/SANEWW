@@ -154,7 +154,7 @@ export default function Booking() {
               .map((pc, i) => (
                 <Link
                   key={pc._id || i}
-                  href={`/admin/confirm_pc/${selectedDate}T${startTime}/${selectedDate}T${endTime}/${pc.PC_ID}`}
+                  href={`/confirm_pc/${selectedDate}T${startTime}/${selectedDate}T${endTime}/${pc.PC_ID}`}
                   className="group bg-[#802834] rounded-md overflow-hidden shadow-md transition hover:shadow-lg"
                 >
                   <div className="relative w-full aspect-[4/3]">

@@ -24,30 +24,25 @@ export default function PcMonitorPage() {
     "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",
   ];
 
-  // dynamic map ของ PC_ID -> PC name
   const [pcIdMap, setPcIdMap] = useState<Record<string, string>>({});
 
-  // โหลดข้อมูล PC จาก API
+  // โหลดข้อมูล PC
   useEffect(() => {
     const fetchPCs = async () => {
       try {
         const res = await fetch("/api/pc_manage", { cache: "no-store" });
         const data = await res.json();
         if (Array.isArray(data.computers)) {
-          // สร้าง pcs เป็น object พร้อม enable
           const newPcs: PC[] = data.computers.map((pc: any) => ({
             PC_ID: pc.PC_ID,
             name: pc.PC_ID,
-            enable: pc.enable ?? true, // default true
+            enable: pc.enable ?? true,
           }));
 
           setPcs(newPcs);
 
-          // สร้าง map dynamic
           const newMap: Record<string, string> = {};
-          newPcs.forEach((pc) => {
-            newMap[pc.PC_ID] = pc.name;
-          });
+          newPcs.forEach((pc) => { newMap[pc.PC_ID] = pc.name; });
           setPcIdMap(newMap);
         } else {
           setPcs([]);
@@ -59,11 +54,10 @@ export default function PcMonitorPage() {
         setLoading(false);
       }
     };
-
     fetchPCs();
   }, []);
 
-  // โหลด booking จาก API เมื่อเปลี่ยนวันที่
+  // โหลด booking ตามวันที่
   useEffect(() => {
     if (!selectedDate || pcs.length === 0) return;
     const fetchData = async () => {
@@ -83,37 +77,46 @@ export default function PcMonitorPage() {
     fetchData();
   }, [selectedDate, pcs]);
 
-  // แปลง bookings เป็น map { PC -> { timeSlot -> booking } }
+  // สร้าง map { PC -> { timeSlot -> booking } }
   const bookingMap: Record<string, Record<string, any>> = {};
   pcs.forEach((pc) => (bookingMap[pc.name] = {}));
 
   bookings.forEach((b) => {
     const startHour = new Date(b.start_time).getHours();
     const endHour = new Date(b.end_time).getHours();
-
     const pcName = pcIdMap[b.pc_id] || "PC";
 
     for (let h = startHour; h < endHour; h++) {
-      const slotLabel = `${String(h).padStart(2, "0")}:00 - ${String(
-        h + 1
-      ).padStart(2, "0")}:00`;
+      const slotLabel = `${String(h).padStart(2, "0")}:00 - ${String(h + 1).padStart(2, "0")}:00`;
       bookingMap[pcName][slotLabel] = b;
     }
   });
 
+  // render cell โดยเช็กเวลา
   const renderCell = (pc: string, slot: string) => {
     const booking = bookingMap[pc]?.[slot];
     if (!booking) {
       return (
-        <td className="border px-2 py-6 bg-green-600 min-w-[100px]">
-          Available
-        </td>
+        <td className="border px-2 py-6 bg-green-600 min-w-[100px]">Available</td>
       );
     }
-    const statusClass =
-      booking.booking_status === "approved" ? "bg-yellow-500" : "bg-blue-500";
-    const statusText =
-      booking.booking_status === "approved" ? "BOOKED" : "IN USE";
+
+    const now = new Date();
+    const start = new Date(booking.start_time);
+    const end = new Date(booking.end_time);
+    const isInUse = now >= start && now < end;
+
+    const statusClass = isInUse
+      ? "bg-blue-500"
+      : booking.booking_status === "approved"
+        ? "bg-yellow-500"
+        : "bg-blue-500";
+
+    const statusText = isInUse
+      ? "IN USE"
+      : booking.booking_status === "approved"
+        ? "BOOKED"
+        : "IN USE";
 
     return (
       <td className={`border px-2 py-6 min-w-[100px] ${statusClass}`}>
@@ -125,13 +128,17 @@ export default function PcMonitorPage() {
     );
   };
 
-  if (loading) {
-    return <p className="text-white p-4">Loading PCs...</p>;
-  }
+  // ทำให้ table update ทุกนาทีโดยไม่ต้อง refresh
+  useEffect(() => {
+    const interval = setInterval(() => setBookings((prev) => [...prev]), 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) return <p className="text-white p-4">Loading PCs...</p>;
 
   return (
     <>
-      {/* NavBar-Admin */}
+      {/* NavBar */}
       <div className="bg-[#802834] h-[10vh] fixed top-0 left-0 right-0 z-50 flex items-center justify-end px-4">
         <div className="hidden md:flex items-center gap-4">
           <Link href="/">
@@ -141,17 +148,9 @@ export default function PcMonitorPage() {
           </Link>
           <div className="flex items-center gap-4">
             <button className="flex items-center">
-              <Image
-                src="/persona.jpg"
-                alt="profile"
-                width={50}
-                height={50}
-                className="object-cover rounded-full z-10"
-              />
+              <Image src="/persona.jpg" alt="profile" width={50} height={50} className="object-cover rounded-full z-10" />
               <div className="-ml-4 h-12 px-3 bg-white rounded-md flex items-center shadow-lg">
-                <h1 className="font-bold text-[#802834] text-sm md:text-lg ml-2">
-                  HELLO! ADMIN
-                </h1>
+                <h1 className="font-bold text-[#802834] text-sm md:text-lg ml-2">HELLO! ADMIN</h1>
               </div>
             </button>
           </div>
@@ -176,15 +175,13 @@ export default function PcMonitorPage() {
             <thead>
               <tr className="bg-gray-700">
                 <th className="border px-2 py-3 min-w-[80px]">PC</th>
-                {timeSlots.map((time, i) => (
-                  <th key={i}>{time}</th>
-                ))}
+                {timeSlots.map((time, i) => <th key={i}>{time}</th>)}
               </tr>
             </thead>
             <tbody>
               {pcs.map((pc, idx) => (
                 <tr key={idx} className="bg-gray-800 hover:bg-gray-600">
-                  {/* PC Name + Toggle */}
+                  {/* PC + toggle */}
                   <td className="border px-2 py-3 font-bold min-w-[80px]">
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-1">
                       <span>{pc.name}</span>
@@ -195,11 +192,8 @@ export default function PcMonitorPage() {
                           onChange={async (e) => {
                             const checked = e.target.checked;
                             await togglePC(pc.PC_ID, checked);
-
                             setPcs((prev) =>
-                              prev.map((p) =>
-                                p.PC_ID === pc.PC_ID ? { ...p, enable: checked } : p
-                              )
+                              prev.map((p) => p.PC_ID === pc.PC_ID ? { ...p, enable: checked } : p)
                             );
                           }}
                           className="sr-only peer"
@@ -212,9 +206,7 @@ export default function PcMonitorPage() {
 
                   {/* Cells */}
                   {timeSlots.map((slot, j) => (
-                    <React.Fragment key={j}>
-                      {renderCell(pc.name, slot)}
-                    </React.Fragment>
+                    <React.Fragment key={j}>{renderCell(pc.name, slot)}</React.Fragment>
                   ))}
                 </tr>
               ))}
