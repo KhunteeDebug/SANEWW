@@ -67,7 +67,7 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
       if (res.ok) {
 
 
-        const link = `/admin/randomID/${encodeURIComponent(data.end_time)}/${data.username}/${data.password}`;
+        const link = `/admin/randomID/${encodeURIComponent(data.end_time)}/${data.username}/${data.password}/${id}/`;
 
         // ส่งผู้ใช้ไปหน้าผลลัพธ์
         toast.success(data.message);

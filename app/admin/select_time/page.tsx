@@ -175,7 +175,7 @@ export default function Booking() {
                   <div className="relative w-full aspect-[4/3]">
                     <Image
                       src={"/PC.png"}
-                      alt={pc.Computer_Name}
+                      alt={pc.PC_ID}
                       fill
                       className="object-contain p-2"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -183,7 +183,7 @@ export default function Booking() {
                   </div>
                   <div className="py-2 px-3">
                     <h1 className="text-white text-center text-base sm:text-lg">
-                      {pc.Computer_Name + `(เครื่องที่ ${i + 1})`}
+                      {pc.PC_ID + `(เครื่องที่ ${i + 1})`}
                     </h1>
                   </div>
                 </Link>

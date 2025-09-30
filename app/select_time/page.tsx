@@ -90,6 +90,7 @@ export default function Booking() {
 
   return (
     <div className="min-h-screen bg-image flex flex-col items-center px-4 sm:px-6 py-6 pt-30">
+
       <div className="w-full max-w-7xl space-y-6">
         {/* Top controls */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -153,13 +154,13 @@ export default function Booking() {
               .map((pc, i) => (
                 <Link
                   key={pc._id || i}
-                  href={`/confirm_pc/${selectedDate}T${startTime}/${selectedDate}T${endTime}/${pc.PC_ID}`}
+                  href={`/admin/confirm_pc/${selectedDate}T${startTime}/${selectedDate}T${endTime}/${pc.PC_ID}`}
                   className="group bg-[#802834] rounded-md overflow-hidden shadow-md transition hover:shadow-lg"
                 >
                   <div className="relative w-full aspect-[4/3]">
                     <Image
                       src={"/PC.png"}
-                      alt={pc.Computer_Name}
+                      alt={pc.PC_ID}
                       fill
                       className="object-contain p-2"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -167,12 +168,13 @@ export default function Booking() {
                   </div>
                   <div className="py-2 px-3">
                     <h1 className="text-white text-center text-base sm:text-lg">
-                      {pc.Computer_Name + `(เครื่องที่ ${i + 1})`}
+                      {pc.PC_ID + `(เครื่องที่ ${i + 1})`}
                     </h1>
                   </div>
                 </Link>
               ))
           )}
+
         </div>
       </div>
     </div>

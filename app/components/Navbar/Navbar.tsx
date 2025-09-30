@@ -158,6 +158,11 @@ const Navbar = () => {
           <Link href="/point" className="w-full text-center py-2 hover:bg-[#5d1c26]">
             POINT BALANCE
           </Link>
+          {user?.role == "Admin" && (
+            <Link href="/admin" className="w-full text-center py-2 hover:bg-[#5d1c26]">
+              ADMIN
+            </Link>
+          )}
         </div>
       )}
     </div>

@@ -34,14 +34,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* INFOMATION */}
+          {/* PROMOTION */}
           <div>
             <div className="bg-[#802834] text-white px-4 py-2 rounded-md w-fit mb-4">
-              INFOMATION
+              PROMOTION
             </div>
             <div className="w-full aspect-[4/3] bg-gray-300 rounded-md flex items-center justify-center">
-              <Image
-                src="/promotion.png"
+              <img
+                src="http://103.230.121.18:8080/promo_photo/Information.png"
                 alt="Promotion"
                 width={500}
                 height={400}

@@ -2,12 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import togglePC from "./togglePC";
 import Link from "next/link";
+
+interface PC {
+  PC_ID: string;
+  name: string;
+  enable: boolean;
+}
 
 export default function PcMonitorPage() {
   const [selectedDate, setSelectedDate] = useState("");
   const [bookings, setBookings] = useState<any[]>([]);
-  const [pcs, setPcs] = useState<string[]>([]);
+  const [pcs, setPcs] = useState<PC[]>([]);
   const [loading, setLoading] = useState(true);
 
   const timeSlots = [
@@ -27,16 +34,21 @@ export default function PcMonitorPage() {
         const res = await fetch("/api/pc_manage", { cache: "no-store" });
         const data = await res.json();
         if (Array.isArray(data.computers)) {
+          // สร้าง pcs เป็น object พร้อม enable
+          const newPcs: PC[] = data.computers.map((pc: any) => ({
+            PC_ID: pc.PC_ID,
+            name: pc.PC_ID,
+            enable: pc.enable ?? true, // default true
+          }));
+
+          setPcs(newPcs);
+
           // สร้าง map dynamic
           const newMap: Record<string, string> = {};
-          data.computers.forEach((pc: any, idx: number) => {
-            const pcName = `${pc.PC_ID}`;
-            newMap[pc.PC_ID] = pcName;
+          newPcs.forEach((pc) => {
+            newMap[pc.PC_ID] = pc.name;
           });
           setPcIdMap(newMap);
-
-          // เก็บรายชื่อ PC ตามลำดับ map
-          setPcs(Object.values(newMap));
         } else {
           setPcs([]);
         }
@@ -73,13 +85,12 @@ export default function PcMonitorPage() {
 
   // แปลง bookings เป็น map { PC -> { timeSlot -> booking } }
   const bookingMap: Record<string, Record<string, any>> = {};
-  pcs.forEach((pc) => (bookingMap[pc] = {}));
+  pcs.forEach((pc) => (bookingMap[pc.name] = {}));
 
   bookings.forEach((b) => {
     const startHour = new Date(b.start_time).getHours();
     const endHour = new Date(b.end_time).getHours();
 
-    // หา pcName จาก map dynamic
     const pcName = pcIdMap[b.pc_id] || "PC";
 
     for (let h = startHour; h < endHour; h++) {
@@ -166,11 +177,7 @@ export default function PcMonitorPage() {
               <tr className="bg-gray-700">
                 <th className="border px-2 py-3 min-w-[80px]">PC</th>
                 {timeSlots.map((time, i) => (
-                  <th
-                    key={i}
-                  >
-                    {time}
-                  </th>
+                  <th key={i}>{time}</th>
                 ))}
               </tr>
             </thead>
@@ -180,9 +187,23 @@ export default function PcMonitorPage() {
                   {/* PC Name + Toggle */}
                   <td className="border px-2 py-3 font-bold min-w-[80px]">
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-1">
-                      <span>{pc}</span>
+                      <span>{pc.name}</span>
                       <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" className="sr-only peer" />
+                        <input
+                          type="checkbox"
+                          checked={pc.enable}
+                          onChange={async (e) => {
+                            const checked = e.target.checked;
+                            await togglePC(pc.PC_ID, checked);
+
+                            setPcs((prev) =>
+                              prev.map((p) =>
+                                p.PC_ID === pc.PC_ID ? { ...p, enable: checked } : p
+                              )
+                            );
+                          }}
+                          className="sr-only peer"
+                        />
                         <div className="w-10 h-5 bg-red-300 rounded-full peer peer-checked:bg-green-300 transition-colors duration-300"></div>
                         <div className="absolute left-[2px] top-[2px] bg-white w-4 h-4 rounded-full shadow-md transition-transform duration-300 peer-checked:translate-x-5"></div>
                       </label>
@@ -191,7 +212,9 @@ export default function PcMonitorPage() {
 
                   {/* Cells */}
                   {timeSlots.map((slot, j) => (
-                    <React.Fragment key={j}>{renderCell(pc, slot)}</React.Fragment>
+                    <React.Fragment key={j}>
+                      {renderCell(pc.name, slot)}
+                    </React.Fragment>
                   ))}
                 </tr>
               ))}
