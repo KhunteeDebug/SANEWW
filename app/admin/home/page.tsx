@@ -13,6 +13,7 @@ export default function HomeAdminPage() {
     { label: "PC MONITORING", icon: "/computer.png", route: "/admin/pcmonitor" },
     { label: "MANAGE COMPUTER", icon: "/computer.png", route: "/admin/select_time" },
     { label: "EDIT PROMOTION", icon: "/edit-promotion.png", route: "/admin/uploadpromotion" },
+    { label: "BOOKING HISIORY", icon: "/person-HomeAdmin.png", route: "/admin/booking_history" },
   ];
 
   const [income, setIncome] = useState<Incomedata | null>(null);
