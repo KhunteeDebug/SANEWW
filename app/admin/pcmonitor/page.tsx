@@ -24,8 +24,6 @@ export default function PcMonitorPage() {
     "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00",
   ];
 
-  const [pcIdMap, setPcIdMap] = useState<Record<string, string>>({});
-
   // โหลดข้อมูล PC
   useEffect(() => {
     const fetchPCs = async () => {
@@ -38,12 +36,7 @@ export default function PcMonitorPage() {
             name: pc.PC_ID,
             enable: pc.enable ?? true,
           }));
-
           setPcs(newPcs);
-
-          const newMap: Record<string, string> = {};
-          newPcs.forEach((pc) => { newMap[pc.PC_ID] = pc.name; });
-          setPcIdMap(newMap);
         } else {
           setPcs([]);
         }
@@ -77,24 +70,26 @@ export default function PcMonitorPage() {
     fetchData();
   }, [selectedDate, pcs]);
 
-  // สร้าง map { PC -> { timeSlot -> booking } }
+  // สร้าง map { PC_ID -> { timeSlot -> booking } }
   const bookingMap: Record<string, Record<string, any>> = {};
-  pcs.forEach((pc) => (bookingMap[pc.name] = {}));
+  pcs.forEach((pc) => (bookingMap[pc.PC_ID] = {}));
 
   bookings.forEach((b) => {
     const startHour = new Date(b.start_time).getHours();
     const endHour = new Date(b.end_time).getHours();
-    const pcName = pcIdMap[b.pc_id] || "PC";
+    const pcId = b.pc_id;
+
+    if (!bookingMap[pcId]) bookingMap[pcId] = {};
 
     for (let h = startHour; h < endHour; h++) {
       const slotLabel = `${String(h).padStart(2, "0")}:00 - ${String(h + 1).padStart(2, "0")}:00`;
-      bookingMap[pcName][slotLabel] = b;
+      bookingMap[pcId][slotLabel] = b;
     }
   });
 
   // render cell โดยเช็กเวลา
-  const renderCell = (pc: string, slot: string) => {
-    const booking = bookingMap[pc]?.[slot];
+  const renderCell = (pcId: string, slot: string) => {
+    const booking = bookingMap[pcId]?.[slot];
     if (!booking) {
       return (
         <td className="border px-2 py-6 bg-green-600 min-w-[100px]">Available</td>
@@ -193,7 +188,9 @@ export default function PcMonitorPage() {
                             const checked = e.target.checked;
                             await togglePC(pc.PC_ID, checked);
                             setPcs((prev) =>
-                              prev.map((p) => p.PC_ID === pc.PC_ID ? { ...p, enable: checked } : p)
+                              prev.map((p) =>
+                                p.PC_ID === pc.PC_ID ? { ...p, enable: checked } : p
+                              )
                             );
                           }}
                           className="sr-only peer"
@@ -206,7 +203,7 @@ export default function PcMonitorPage() {
 
                   {/* Cells */}
                   {timeSlots.map((slot, j) => (
-                    <React.Fragment key={j}>{renderCell(pc.name, slot)}</React.Fragment>
+                    <React.Fragment key={j}>{renderCell(pc.PC_ID, slot)}</React.Fragment>
                   ))}
                 </tr>
               ))}
