@@ -49,6 +49,7 @@ export default function UploadPage() {
                 method: "POST",
                 body: form,
             });
+            console.log(res);
             const data = await res.json();
 
             const encoded = data.message;

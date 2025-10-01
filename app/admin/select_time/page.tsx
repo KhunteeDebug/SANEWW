@@ -62,7 +62,7 @@ export default function Booking() {
           { cache: "no-store" }
         );
         const data = await res.json();
-        console.log("AvailablePCs response:", data);
+        // console.log("AvailablePCs response:", data);
 
         if (Array.isArray(data.availablePCs)) {
           setAvailableNames(data.availablePCs);
