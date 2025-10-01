@@ -57,7 +57,7 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
       form.append("usepoint", pdiscuss);
       form.append("slip", file);
 
-      const res = await fetch("/api/booking", {
+      const res = await fetch("/api/admin/booking", {
         method: "POST",
         body: form,
       });
@@ -192,3 +192,4 @@ export default function PaymentPage({ params }: { params: Promise<{ start: strin
     </div>
   );
 }
+
