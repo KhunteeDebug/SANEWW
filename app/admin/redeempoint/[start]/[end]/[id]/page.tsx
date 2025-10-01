@@ -13,6 +13,7 @@ export default function RedeemPointsPage({ params }: { params: Promise<{ id: str
     const [points, setPoints] = useState("");
     const { id, start, end } = React.use(params);
     const [user, setUser] = useState<UserData | null>(null);
+    const point_diss = (parseInt(points || "0") / 100).toFixed(0);
 
 
 
@@ -151,7 +152,11 @@ export default function RedeemPointsPage({ params }: { params: Promise<{ id: str
                         ⬅ BACK
                     </button>
                 </Link>
-                <Link href={`/admin/payment/${start}/${end}/${id}/${hours.toFixed(2)}/${price}/${price.toFixed(1)}/${(parseInt(points || "0") / 100).toFixed(0)}/${points}`}>
+                <Link
+                    href={`/admin/payment/${start}/${end}/${id}/${hours.toFixed(2)}/${price}/${price.toFixed(1)}/${point_diss}`}
+                >
+
+
 
                     <button className="bg-white text-black px-4 sm:px-6 py-2 rounded font-bold text-sm sm:text-base">
                         NEXT ➡
