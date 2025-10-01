@@ -59,7 +59,7 @@ export default function CustomersPage() {
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold">Customers</h1>
-            <p className="text-slate-400 text-sm">User · Datetime · Time</p>
+            <p className="text-slate-400 text-sm">User · Create Date · Time</p>
           </div>
         </div>
 
@@ -69,7 +69,7 @@ export default function CustomersPage() {
               <thead>
                 <tr className="bg-slate-950/70 text-slate-300 text-sm">
                   <th className="px-6 py-4 text-left font-semibold">Username</th>
-                  <th className="px-6 py-4 text-left font-semibold">Datetime (พ.ศ.)</th>
+                  <th className="px-6 py-4 text-left font-semibold">Create Date</th>
                   <th className="px-6 py-4 text-left font-semibold">Time</th>
                 </tr>
               </thead>
@@ -118,8 +118,8 @@ export default function CustomersPage() {
 
       {/* Popup */}
       {selectedRow && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-slate-900 rounded-xl p-6 w-96 relative shadow-lg">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 ">
+          <div className="bg-slate-900 rounded-xl p-6 w-96 relative shadow-lg border border-slate-500">
             <button
               className="absolute top-2 right-2 text-white font-bold text-xl"
               onClick={() => setSelectedRow(null)}
