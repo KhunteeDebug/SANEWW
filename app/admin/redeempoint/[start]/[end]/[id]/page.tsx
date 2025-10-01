@@ -99,48 +99,7 @@ export default function RedeemPointsPage({ params }: { params: Promise<{ id: str
                     <p className="text-sm sm:text-base">ชั่วโมง : {hours.toFixed(2)}</p>
                     <p className="text-sm sm:text-base">ราคา : {price.toFixed(2)}</p>
 
-                    {/* Redeem Point */}
-                    <div className="mt-6">
-                        <h3 className="font-bold text-xl sm:text-2xl mb-4">REDEEM POINTS</h3>
-
-                        {/* TOP ROW */}
-                        <div className="flex flex-col sm:flex-row bg-[#B0AAAA] text-black p-4 rounded justify-between items-center mb-4 gap-3">
-                            {/* LEFT */}
-                            <div className="text-center sm:text-left">
-                                <p className="font-bold text-xs sm:text-sm">POINTS BALANCE</p>
-                                <p className="text-lg sm:text-xl font-extrabold">{user ? user.points.toFixed(2) : "000.00"}</p>
-                                <p className="text-[10px] sm:text-xs font-semibold mt-1">
-                                    *100 POINTS = 1 BATH
-                                </p>
-                            </div>
-
-                            {/* RIGHT - Input */}
-                            <input
-                                type="number"
-                                placeholder="000"
-                                className="w-[80px] text-center rounded bg-[#D9D9D9] text-black px-2 py-1 font-bold"
-                                value={points}
-                                min={0}
-                                max={user ? user.points : 0}
-                                onChange={(e) => setPoints(e.target.value)}
-                                onKeyDown={(e) => {
-                                    // บล็อกทุกการพิมพ์ตัวเลข/อักษร
-                                    e.preventDefault();
-                                }}
-                            />
-
-                        </div>
-
-                        {/* BOTTOM ROW - Cash discount */}
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-[#B0AAAA] text-black px-4 py-2 rounded font-bold gap-2">
-                            <span className="text-sm sm:text-base text-center sm:text-left">
-                                ส่วนลดที่ได้แทนเงินสด
-                            </span>
-                            <span className="bg-[#D9D9D9] px-3 py-1 rounded text-sm sm:text-base text-center">
-                                {(parseInt(points || "0") / 100).toFixed(2)}
-                            </span>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
 
@@ -166,3 +125,4 @@ export default function RedeemPointsPage({ params }: { params: Promise<{ id: str
         </div>
     );
 }
+
