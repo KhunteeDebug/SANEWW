@@ -1,48 +1,168 @@
+"use client";
 
-import Image from 'next/image'
-import Link from "next/link";
+
+import Image from "next/image";
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
+interface UserData {
+    username: string;
+    points: number;
+}
 
-export default function Payment({ params }: { params: Promise<{ id: string; start: string; end: string, time: string, price: string, discuss: string, pdiscuss: string }> }) {
-    const { id, start, end, time, price, discuss, pdiscuss } = React.use(params);
-    const total_price = (price - pdiscuss).toFixed(2);
+export default function RedeemPointsPage({ params }: { params: Promise<{ id: string; start: string; end: string }> }) {
+    const [points, setPoints] = useState("");
+    const { id, start, end } = React.use(params);
+    const [user, setUser] = useState<UserData | null>(null);
+    const point_diss = (parseInt(points || "0") / 100).toFixed(0);
+
+
+
+    // ✅ decode แล้ว parse Date
+    const startDate = useMemo(() => new Date(decodeURIComponent(start)), [start]);
+    const endDate = useMemo(() => new Date(decodeURIComponent(end)), [end]);
+
+    // ✅ คำนวณชั่วโมง
+    const hours = useMemo(() => {
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) return 0;
+        const diffMs = endDate.getTime() - startDate.getTime();
+        const diffHours = diffMs / (1000 * 60 * 60);
+        return diffHours > 0 ? diffHours : 0;
+    }, [startDate, endDate]);
+
+    // ✅ คำนวณราคา
+    const price = hours * 50;
+
+    // ✅ format วันที่
+    const formatDate = (date: Date) => {
+        if (isNaN(date.getTime())) return "-";
+        return date.toLocaleString("th-TH", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    };
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const res = await fetch("/api/getData", {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json?.data || json?.message) {
+                        setUser(json.data || json.message); // รองรับหลายรูปแบบ response
+                    }
+                } else {
+                    console.warn("Not authenticated");
+                }
+            } catch (err) {
+                console.error("Failed to fetch user:", err);
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
 
     return (
-        <div className="min-h-screen flex justify-center items-center p-6 bg-image">
-            <div className="space-y-6 items-center justify-center">
-                <h1 className="text-white text-4xl font-bold text-center">SCAN TO PAY</h1>
-                <div className="flex justify-center rounded-md">
-                    <img
-                        src={`https://promptpay.io/0842463694/${price}`}
-                        alt="PromptPay QR"
-                        className="w-40 h-40"
+        <div className="min-h-screen bg-[url('/backgraund.jpg')] text-white bg-center bg-cover flex flex-col">
+            {/* Spacer */}
+            <div className="h-[10vh] px-6"></div>
+
+            {/* Main Content */}
+            <div className="flex flex-col lg:flex-row gap-6 items-center justify-center p-4 sm:p-6 lg:p-8">
+                {/* PC Image & Label */}
+                <div className="text-center w-full sm:w-[80%] md:w-[60%] lg:w-auto">
+                    <Image
+                        src="/PC.png"
+                        alt="PC"
+                        width={400}
+                        height={300}
+                        className="rounded shadow mx-auto"
                     />
+                    <div className="mt-2 bg-[#9F3F3F] py-2 px-4 rounded font-bold text-sm sm:text-base">
+                        เครื่อง {id}
+                    </div>
                 </div>
 
+                {/* Booking Info + Redeem Form */}
+                <div className="bg-[#2F2F2F] p-4 sm:p-6 rounded shadow w-full max-w-[300px]">
+                    <h2 className="text-lg sm:text-xl font-bold mb-4">รายการจอง</h2>
+                    <p className="text-sm sm:text-base">PC : {id}</p>
+                    <p className="text-sm sm:text-base">วันเริ่ม : {formatDate(startDate)}</p>
+                    <p className="text-sm sm:text-base">วันสิ้นสุด : {formatDate(endDate)}</p>
+                    <p className="text-sm sm:text-base">ชั่วโมง : {hours.toFixed(2)}</p>
+                    <p className="text-sm sm:text-base">ราคา : {price.toFixed(2)}</p>
 
-                <div className='bg-[#463B3B] rounded-md pt-5 px-20'>
-                    <div className='text-white text-center pt-9 space-y-8 font-bold text-3xl'>
-                        <h1>Order Summary</h1>
-                        <h1>Total : {total_price} Bath</h1>
-                        <h1>Order : #{id}</h1>
+                    {/* Redeem Point */}
+                    <div className="mt-6">
+                        <h3 className="font-bold text-xl sm:text-2xl mb-4">REDEEM POINTS</h3>
+
+                        {/* TOP ROW */}
+                        <div className="flex flex-col sm:flex-row bg-[#B0AAAA] text-black p-4 rounded justify-between items-center mb-4 gap-3">
+                            {/* LEFT */}
+                            <div className="text-center sm:text-left">
+                                <p className="font-bold text-xs sm:text-sm">POINTS BALANCE</p>
+                                <p className="text-lg sm:text-xl font-extrabold">{user ? user.points.toFixed(2) : "000.00"}</p>
+                                <p className="text-[10px] sm:text-xs font-semibold mt-1">
+                                    *100 POINTS = 1 BATH
+                                </p>
+                            </div>
+
+                            {/* RIGHT - Input */}
+                            <input
+                                type="number"
+                                placeholder="000"
+                                className="w-[80px] text-center rounded bg-[#D9D9D9] text-black px-2 py-1 font-bold"
+                                value={points}
+                                min={0}
+                                max={user ? user.points : 0}
+                                onChange={(e) => setPoints(e.target.value)}
+                                onKeyDown={(e) => {
+                                    // บล็อกทุกการพิมพ์ตัวเลข/อักษร
+                                    e.preventDefault();
+                                }}
+                            />
+
+                        </div>
+
+                        {/* BOTTOM ROW - Cash discount */}
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-[#B0AAAA] text-black px-4 py-2 rounded font-bold gap-2">
+                            <span className="text-sm sm:text-base text-center sm:text-left">
+                                ส่วนลดที่ได้แทนเงินสด
+                            </span>
+                            <span className="bg-[#D9D9D9] px-3 py-1 rounded text-sm sm:text-base text-center">
+                                {(parseInt(points || "0") / 100).toFixed(2)}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
+
             {/* Footer Buttons */}
             <div className="p-4 sm:p-6 h-[10vh] z-[100] fixed bottom-0 w-full flex items-center justify-between 
-                bg-transparent sm:bg-[#802834]">
-                <Link href={`/redeempoint/${start}/${end}/${id}`}>
-
+          bg-transparent sm:bg-[#802834]">
+                <Link href={"/select_time"}>
                     <button className="bg-white text-black px-4 sm:px-6 py-2 rounded font-bold text-sm sm:text-base">
                         ⬅ BACK
                     </button>
                 </Link>
-                <Link href={`/upload_slip/${start}/${end}/${id}/${time}/${price}/${discuss}/${pdiscuss}`}>
+                <Link
+                    href={`/payment/${start}/${end}/${id}/${hours.toFixed(2)}/${price}/${price.toFixed(1)}/${point_diss}`}
+                >
+
+
+
                     <button className="bg-white text-black px-4 sm:px-6 py-2 rounded font-bold text-sm sm:text-base">
                         NEXT ➡
                     </button>
                 </Link>
             </div>
         </div>
-    )
+    );
 }
