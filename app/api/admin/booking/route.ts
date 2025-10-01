@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
             console.log("FORM:", key, value);
         }
 
-        const res = await fetch("http://103.230.121.18:8080/booking", {
+        const res = await fetch("http://103.230.121.18:8080/admin/booking", {
             method: "POST",
             body: formData,
             headers: {
@@ -48,3 +48,4 @@ export async function POST(req: NextRequest) {
         );
     }
 }
+
