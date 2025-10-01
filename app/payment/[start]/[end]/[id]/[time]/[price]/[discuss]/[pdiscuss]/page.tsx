@@ -13,7 +13,7 @@ export default function Payment({ params }: { params: Promise<{ id: string; star
                 <h1 className="text-white text-4xl font-bold text-center">SCAN TO PAY</h1>
                 <div className="flex justify-center rounded-md">
                     <img
-                        src="src={`https://promptpay.io/0842463694/${price}`}"
+                        src={`https://promptpay.io/0842463694/${price}`}
                         alt="PromptPay QR"
                         className="w-40 h-40"
                     />
